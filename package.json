@@ -1,0 +1,22 @@
+{
+  "name": "bardo",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/launchbadge/node-bardo.git"
+  },
+  "author": "Ryan Leckey <ryan@launchbadge.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/launchbadge/node-bardo/issues"
+  },
+  "homepage": "https://github.com/launchbadge/node-bardo",
+  "dependencies": {
+    "bluebird": "^2.9.24",
+    "config": "^1.12.0",
+    "pg": "^4.3.0",
+    "pg-native": "^1.8.0"
+  }
+}
