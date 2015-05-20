@@ -4,6 +4,6 @@ import db from "../lib/db"
 global.Promise = require("bluebird")
 
 after(function() {
-  // After execution; close all open db connections
+  // After execution close all open db connections
   db.quit()
 })

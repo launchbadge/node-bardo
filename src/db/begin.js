@@ -1,12 +1,11 @@
 import pool from "../pool"
-import execute from "./execute"
 import domain from "domain"
 import shortid from "shortid"
 import Promise from "bluebird"
 
 export default function begin() {
   return new Promise(function(resolve, reject) {
-    // If we are not in a domain; we need to create a domain
+    // If we are not in a domain we need to create a domain
     let d = process.domain
     let inDomain = true
     if (d == null) {
@@ -14,7 +13,7 @@ export default function begin() {
       inDomain = false
     }
 
-    // If we were not in the domain; put us in it now
+    // If we were not in the domain put us in it now
     if (inDomain) next()
     else d.run(next)
 

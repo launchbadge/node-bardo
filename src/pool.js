@@ -2,12 +2,12 @@ import _ from "lodash"
 import {Pool} from "generic-pool"
 import {native as pg} from "pg"
 
-process.env.SUPPRESS_NO_CONFIG_WARNING = "y";
+process.env.SUPPRESS_NO_CONFIG_WARNING = "y"
 let config = require("config")
 
-let pool = Pool({
+let pool = new Pool({
   create(next) {
-    let client = new pg.Client(config.get("bardo.db"));
+    let client = new pg.Client(config.get("bardo.db"))
     client.connect(function(err) {
       if (err) next(err)
       else next(null, client)

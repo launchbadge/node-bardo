@@ -27,7 +27,7 @@ export default function execute(statement, values) {
   function next() {
     return new Promise(function(resolve, reject) {
       if (!(typeof statement === "string" || statement instanceof String)) {
-        // The statement is not a string; assuming that this is a prepared
+        // The statement is not a string assuming that this is a prepared
         // statement from sql-bricks
         var params = statement.toParams()
         statement = params.text
@@ -58,7 +58,7 @@ export default function execute(statement, values) {
 
         // Parse (and resolve) the result proxy
         if (!_.isFinite(result.rowCount)) {
-          // This doesn't support a sane row count; resolve with nothing
+          // This doesn't support a sane row count resolve with nothing
           resolve()
         } else if (result.fields == null) {
           // Resolve the row count
@@ -67,7 +67,7 @@ export default function execute(statement, values) {
           // Resolve the rows
           resolve(result.rows)
         }
-      });
+      })
     })
   }
 }

@@ -1,5 +1,3 @@
-import _ from "lodash"
-
 process.env.SUPPRESS_NO_CONFIG_WARNING = "y"
 let config = require("config")
 

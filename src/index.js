@@ -1,1 +1,1 @@
-exports.db = require("./db");
+exports.db = require("./db")

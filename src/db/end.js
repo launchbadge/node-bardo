@@ -20,7 +20,7 @@ export default function end() {
   elapsed = elapsed.toFixed(2)
   if (count > 0) {
     log.debug({id, elapsed, count},
-      `${count} statement${count > 1 ? 's' : ''} executed in ${elapsed} ms`)
+      `${count} statement${count > 1 ? "s" : ""} executed in ${elapsed} ms`)
   }
 
   // Remove us from the domain

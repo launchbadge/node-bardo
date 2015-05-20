@@ -1,6 +1,9 @@
 {
+  "parser": "babel-eslint",
   "env": {
     "node": true,
+    "mocha": true,
+    "es6": true,
   },
   "rules": {
     "strict": false,
@@ -17,6 +20,7 @@
     "camelcase": [2, true],
     "eol-last": [2, true],
     "curly": [2, "multi-line"],
+    "space-after-function-name": false,
     "space-after-keywords": [2, "always"],
     "space-before-blocks": 2,
     "space-in-parens": [2, "never"],
@@ -26,7 +30,7 @@
     "dot-notation": [2, {"allowPattern": "^[a-zA-Z0-9]+(_[a-zA-Z0-9]+)+$"}],
     "no-reserved-keys": [2, true],
     "eqeqeq": [2, "smart"],
-    "complexity": [1, 5],
+    "complexity": [1, 10],
     "max-depth": [1, 4],
     "max-len": [1, 80],
     "max-params": [1, 6],
@@ -41,6 +45,7 @@
     "no-sync": [2, true],
     "no-nested-ternary": [2, true],
     "operator-assignment": [2, "always"],
+    "semi": [1, "never"],
     "semi-spacing": [2, {"before": false, "after": true}],
     "quotes": [2, "double", "avoid-escape"],
     "spaced-line-comment": [1, "always", {"exceptions": ["-","+"]}],
