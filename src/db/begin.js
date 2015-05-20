@@ -1,6 +1,8 @@
 import pool from "../pool"
 import execute from "./execute"
 import domain from "domain"
+import shortid from "shortid"
+import Promise from "bluebird"
 
 export default function begin() {
   return new Promise(function(resolve, reject) {
@@ -23,13 +25,10 @@ export default function begin() {
 
         // Initialize the domain context
         if (d.context == null) d.context = {}
-        d.context.client = client
+        d.context.bardo = {id: shortid(), client, count: 0, elapsed: 0}
 
-        // Execute a BEGIN statement to begin a transaction
-        execute("BEGIN").then(function() {
-          // Now resolve with the acquired client
-          resolve(client)
-        })
+        // Resolve with the acquired client
+        resolve(client)
       })
     }
   })

@@ -1,4 +1,5 @@
 import pool from "../pool"
+import Promise from "bluebird"
 
 // Schedule immediate termination (as soon as all active sessions
 // call `.exit`). This is not the normal behavior as the pool normally

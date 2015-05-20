@@ -1,13 +1,13 @@
 import _ from "lodash"
-import config from "./config"
-var {Pool} = require('generic-pool')
+import {Pool} from "generic-pool"
+import {native as pg} from "pg"
 
-var pg = require("pg").native
+process.env.SUPPRESS_NO_CONFIG_WARNING = "y";
+let config = require("config")
 
-var pool = Pool({
+let pool = Pool({
   create(next) {
-    // TODO: Get the options from global store (from db.configure)
-    var client = new pg.Client(config);
+    let client = new pg.Client(config.get("bardo.db"));
     client.connect(function(err) {
       if (err) next(err)
       else next(null, client)

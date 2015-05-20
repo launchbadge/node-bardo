@@ -1,3 +1,4 @@
+// TODO: There has got to be an easier way to do this
 import fs from "fs"
 import path from "path"
 

@@ -1,5 +1,5 @@
 var pg = require("pg").native;
-var config = require("config");
+// var config = require("config");
 var Promise = require("bluebird");
 
 exports.createDatabase = function createDatabase(name) {
