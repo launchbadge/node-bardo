@@ -1,20 +1,20 @@
 var pg = require("pg").native
-// var config = require("config")
+var config = require("./config")
 var Promise = require("bluebird")
 
-exports.createDatabase = function createDatabase(name) {
+export function createDatabase(name) {
   // Use the config name if no name is passed
   if (!name) {
-    name = config.get("db.name")
+    name = config.get("name")
   }
 
   return new Promise(function(resolve, reject) {
     // Create a new client (connecting to `template1`)
     var client = new pg.Client({
-      user: config.get("db.user"),
-      password: config.get("db.password"),
-      port: config.get("db.port"),
-      host: config.get("db.host"),
+      user: config.get("user"),
+      password: config.get("password"),
+      port: config.get("port"),
+      host: config.get("host"),
       database: "template1",
     })
 
@@ -36,19 +36,19 @@ exports.createDatabase = function createDatabase(name) {
   })
 }
 
-exports.dropDatabase = function dropDatabase(name) {
+export function dropDatabase(name) {
   // Use the config name if no name is passed
   if (!name) {
-    name = config.get("db.name")
+    name = config.get("name")
   }
 
   return new Promise(function(resolve, reject) {
     // Create a new client (connecting to `template1`)
     var client = new pg.Client({
-      user: config.get("db.user"),
-      password: config.get("db.password"),
-      port: config.get("db.port"),
-      host: config.get("db.host"),
+      user: config.get("user"),
+      password: config.get("password"),
+      port: config.get("port"),
+      host: config.get("host"),
       database: "template1",
     })
 
@@ -84,4 +84,9 @@ exports.dropDatabase = function dropDatabase(name) {
       })
     })
   })
+}
+
+export default {
+  createDatabase,
+  dropDatabase
 }

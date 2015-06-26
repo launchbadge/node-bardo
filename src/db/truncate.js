@@ -17,7 +17,7 @@ function truncate(tables) {
   if (!tables) {
     // No explicit list of tables was given
     // Do we have something cached?
-    tables = _tableNames[config.get("db.name")]
+    tables = _tableNames[config.get("name")]
     if (tables !== undefined) {
       return callback(tables)
     }
@@ -47,7 +47,7 @@ function truncate(tables) {
         }
 
         // Push this into the cache
-        _tableNames[config.get("db.name")] = tables
+        _tableNames[config.get("name")] = tables
 
         // Continue
         return callback(tables)
