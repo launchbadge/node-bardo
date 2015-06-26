@@ -40,13 +40,3 @@ let pool = new Pool({
 })
 
 export default pool
-
-// Hook into termination and interrupt signals to gracefully exit
-let gracefulExit = _.once(function() {
-  pool.drain(function() {
-    pool.destroyAllNow()
-  })
-})
-
-process.on("SIGTERM", gracefulExit)
-process.on("SIGINT", gracefulExit)
