@@ -1,5 +1,6 @@
 import pool from "../pool"
 import log from "../log"
+import execute from "./execute"
 
 // End the current session and release the acquired connection
 // to the connection pool.
@@ -12,20 +13,32 @@ export default function end() {
     return
   }
 
-  // Release our client from the pool
-  pool.release(d.context.bardo.client)
+  return new Promise(function(resolve, reject) {
+    function next() {
+      // Release our client from the pool
+      pool.release(d.context.bardo.client)
 
-  // DEBUG: Report total SQL execution time for this session
-  let {id, elapsed, count} = d.context.bardo
-  elapsed = elapsed.toFixed(2)
-  if (count > 0) {
-    log.debug({id, elapsed, count},
-      `${count} statement${count > 1 ? "s" : ""} executed in ${elapsed} ms`)
-  }
+      // DEBUG: Report total SQL execution time for this session
+      let {id, elapsed, count} = d.context.bardo
+      elapsed = elapsed.toFixed(2)
+      if (count > 0) {
+        log.debug({id, elapsed: `${elapsed}ms`, count},
+          `${count} statement${count > 1 ? "s" : ""} executed in ${elapsed}ms`)
+      }
 
-  // Remove us from the domain
-  delete d.context.bardo
+      // Remove us from the domain
+      delete d.context.bardo
 
-  // Leave our domain
-  d.exit()
+      // Leave our domain
+      d.exit()
+      resolve()
+    }
+
+    // If we are currently in a transaction; rollback the transaction
+    if (d.context.bardo.inTransaction) {
+      execute("ROLLBACK").then(next)
+    } else {
+      next()
+    }
+  })
 }

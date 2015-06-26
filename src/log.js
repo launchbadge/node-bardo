@@ -1,14 +1,10 @@
 import bunyan from "bunyan"
 import config from "config"
+import PrettyStream from "bunyan-prettystream"
 
-// Create a stdout pipe (if during tests)
-var stdout = process.stdout
-if (process.env.NODE_ENV === "test") {
-  var PrettyStream = require("bunyan-prettystream")
-
-  stdout = new PrettyStream()
-  stdout.pipe(process.stdout)
-}
+// Create a stdout pipe (to format the output from bunyan)
+var stdout = new PrettyStream()
+stdout.pipe(process.stdout)
 
 let log = bunyan.createLogger({
   name: "bardo",

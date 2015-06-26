@@ -26,8 +26,9 @@ export default function begin() {
         if (d.context == null) d.context = {}
         d.context.bardo = {id: shortid(), client, count: 0, elapsed: 0}
 
-        // Resolve with the acquired client
-        resolve(client)
+        // Execute a "BEGIN" statement to begin the transaction
+        // TODO: This should be configurable
+        return require("./execute")("BEGIN").then(resolve, reject)
       })
     }
   })
