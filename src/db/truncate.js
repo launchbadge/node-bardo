@@ -1,10 +1,15 @@
+import config from "../config"
+import execute from "./execute"
 
 // Cache of table names for a database name
 var _tableNames = {}
 
-exports.truncate = truncate
-function truncate(tables) {
+export default function truncate(tables) {
   function callback(tables) {
+    if (!tables || tables.length === 0) {
+      return null
+    }
+
     var tableNames = tables
       .map(function(name) {
         return '"' + name + '"'
@@ -28,8 +33,8 @@ function truncate(tables) {
         "FROM information_schema.tables"
     ).then(function(result) {
         tables = []
-        for (var i = 0; i < result.rows.length; i += 1) {
-          var row = result.rows[i]
+        for (var i = 0; i < result.length; i += 1) {
+          var row = result[i]
 
           if (row.table_type === "view") {
             continue
