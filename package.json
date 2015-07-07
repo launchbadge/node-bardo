@@ -25,7 +25,8 @@
     "node-int64": "^0.4.0",
     "pg": "^4.3.0",
     "pg-native": "^1.8.0",
-    "shortid": "^2.2.2"
+    "shortid": "^2.2.2",
+    "underscore.string": "^3.1.1"
   },
   "devDependencies": {
     "babel": "^5.4.3",

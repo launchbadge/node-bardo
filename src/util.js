@@ -1,92 +1,46 @@
-var pg = require("pg").native
-var config = require("./config")
-var Promise = require("bluebird")
+import _ from "lodash"
+import Str from "underscore.string"
 
-export function createDatabase(name) {
-  // Use the config name if no name is passed
-  if (!name) {
-    name = config.get("name")
-  }
+// Transform from `addr__name_id` to `addr.nameId`
+// TODO: Memoize to improve performance
+export function serialize(row) {
+  return _.transform(row, function(result, value, key) {
+    let segments = key.split("__")
+    let record = result
 
-  return new Promise(function(resolve, reject) {
-    // Create a new client (connecting to `template1`)
-    var client = new pg.Client({
-      user: config.get("user"),
-      password: config.get("password"),
-      port: config.get("port"),
-      host: config.get("host"),
-      database: "template1",
-    })
+    for (let seg of segments.slice(0, segments.length - 1)) {
+      let name = Str.camelize(seg)
 
-    // Establish a connection
-    client.connect(function() {
-      // Create the database
-      var text = "CREATE DATABASE " + name
-      client.query(text, function(err) {
-        client.end()
+      if (record[name] == null) {
+        record[name] = {}
+      }
 
-        // Handle and reject if an error occurred
-        if (err) {
-          return reject(err)
-        }
+      record = record[name]
+    }
 
-        return resolve()
-      })
-    })
+    let name = Str.camelize(segments[segments.length - 1])
+    record[name] = row[key]
   })
 }
 
-export function dropDatabase(name) {
-  // Use the config name if no name is passed
-  if (!name) {
-    name = config.get("name")
+// Transform from `addr.nameId` to `addr__name_id`
+// TODO: Memoize to improve performance
+export function deserialize(item) {
+  let row = {}
+
+  function expand(obj, prefix) {
+    _.each(obj, function(value, key) {
+      let text = Str.underscored(key)
+      let name = prefix ? prefix + "__" + text : text
+      if (_.isPlainObject(value)) {
+        expand(value, name)
+      } else {
+        row[name] = value
+      }
+    })
   }
 
-  return new Promise(function(resolve, reject) {
-    // Create a new client (connecting to `template1`)
-    var client = new pg.Client({
-      user: config.get("user"),
-      password: config.get("password"),
-      port: config.get("port"),
-      host: config.get("host"),
-      database: "template1",
-    })
+  expand(item, null)
 
-    // Establish a connection
-    client.connect(function() {
-      // Force-ably remove all established connections to this database
-      var text = (
-        "SELECT pg_terminate_backend(pg_stat_activity.pid) " +
-        "FROM pg_stat_activity " +
-        "WHERE pg_stat_activity.datname = '" + name + "' " +
-        "AND pid <> pg_backend_pid()"
-      )
-
-      client.query(text, function(err) {
-        // Handle and reject if an error occurred
-        if (err) {
-          client.end()
-          return reject(err)
-        }
-
-        // Drop the database (if it exists)
-        text = "DROP DATABASE IF EXISTS " + name
-        client.query(text, function(err) {
-          client.end()
-
-          // Handle and reject if an error occurred
-          if (err) {
-            return reject(err)
-          }
-
-          return resolve()
-        })
-      })
-    })
-  })
-}
-
-export default {
-  createDatabase,
-  dropDatabase
+  return row
 }
