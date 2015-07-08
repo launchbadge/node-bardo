@@ -17,7 +17,25 @@ function assertContext() {
     }
 
     // Continue onwards with our active domain
-    return resolve();
+    return resolve()
+  })
+}
+
+function assertTransaction(statement) {
+  let ctx = process.domain.context.bardo
+  return new Promise(function(resolve, reject) {
+    if (/^begin/i.test(statement)) {
+      // This statement is going to begin a transaction directly
+      return resolve()
+    }
+
+    if (!ctx.inTransaction) {
+      // We're not in a transaction; we should be
+      return execute("BEGIN").then(resolve).catch(reject)
+    }
+
+    // Looks like everythign is good
+    return resolve()
   })
 }
 
@@ -25,25 +43,13 @@ function assertContext() {
 function execute_(statement, values) {
   let ctx = process.domain.context.bardo
   return new Promise(function(resolve, reject) {
-    if (!(typeof statement === "string" || statement instanceof String)) {
-      // The statement is not a string assuming that this is a prepared
-      // statement from sql-bricks
-      var originalStatement = statement
-      var params = statement.toParams()
-      statement = params.text
-      values = params.values
-    }
-
-    // Trim the statement
-    statement = statement.trim()
-
     if (/^begin/i.test(statement)) {
       // If this is a `BEGIN` statement; put us in a transaction
-      ctx.inTransaction = true;
+      ctx.inTransaction = true
     } else if (/^(commit|rollback)/i.test(statement)) {
       // Else if this is a `COMMIT` or `ROLLBACK` statement;
       // leave the transaction
-      ctx.inTransaction = false;
+      ctx.inTransaction = false
     }
 
     // Default values to an empty array
@@ -87,10 +93,24 @@ function execute_(statement, values) {
 // TODO: Proper parsing of OID types into javscript equivalents
 export default function execute(statement, values) {
   return new Promise(function(resolve, reject) {
-    // Assert the database (and transaction) context
+    // Assert the database context
     return assertContext().then(function() {
-      // Execute the statement
-      return execute_(statement, values).then(resolve, reject)
+      if (!(typeof statement === "string" || statement instanceof String)) {
+        // The statement is not a string assuming that this is a prepared
+        // statement from sql-bricks
+        var params = statement.toParams()
+        statement = params.text
+        values = params.values
+      }
+
+      // Trim the statement
+      statement = statement.trim()
+
+      // Assert the transaction context
+      return assertTransaction(statement).then(function() {
+        // Execute the statement
+        return execute_(statement, values).then(resolve, reject)
+      })
     })
   })
 }
