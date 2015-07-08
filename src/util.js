@@ -47,3 +47,8 @@ export function deserialize(item) {
 
   return row
 }
+
+export default {
+  serialize,
+  deserialize
+}

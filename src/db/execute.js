@@ -59,8 +59,11 @@ function execute_(statement, values) {
 
       // TRACE: Calculate the elasped time and log the SQL statement
       let elapsed = +((microtime.now() - now) / 1000).toFixed(2)
-      log.trace({id: ctx.id, elapsed: `${elapsed}ms`},
-        (originalStatement ? ("" + originalStatement) : statement))
+      log.trace({
+        id: ctx.id,
+        elapsed: `${elapsed}ms`,
+        values: (values && values.length) ? values : undefined
+      }, statement)
 
       // DEBUG: Increment the per-session counters
       ctx.elapsed += elapsed

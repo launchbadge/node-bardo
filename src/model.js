@@ -66,7 +66,7 @@ export default class Model {
     let row = (await db.execute(stmt))[0]
 
     // Return the result
-    return row
+    return this.serialize(row)
   }
 
   /**
@@ -85,7 +85,7 @@ export default class Model {
     let row = (await db.execute(stmt))[0]
 
     // Return the result
-    return row
+    return this.serialize(row)
   }
 
   /**
