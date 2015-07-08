@@ -31,6 +31,15 @@ export function deserialize(item) {
 
   let row = {}
 
+  function clean(value) {
+    if (value instanceof require("buffer").Buffer) {
+      // Buffers need to be encoded
+      value = "\\x" + value.toString("hex")
+    }
+
+    return value
+  }
+
   function expand(obj, prefix) {
     _.each(obj, function(value, key) {
       let text = Str.underscored(key)
@@ -38,7 +47,7 @@ export function deserialize(item) {
       if (_.isPlainObject(value)) {
         expand(value, name)
       } else {
-        row[name] = value
+        row[name] = clean(value, name)
       }
     })
   }
