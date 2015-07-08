@@ -5,7 +5,7 @@ import execute from "./execute"
 var _tableNames = {}
 
 export default function truncate(tables) {
-  function callback(tables) {
+  let callback = function(tables) {
     if (!tables || tables.length === 0) {
       return null
     }
@@ -17,6 +17,10 @@ export default function truncate(tables) {
       .join(", ")
 
     return execute("TRUNCATE " + tableNames + " RESTART IDENTITY CASCADE")
+  }
+
+  if (process.domain != null) {
+    callback = process.domain.bind(callback)
   }
 
   if (!tables) {
