@@ -4,6 +4,7 @@ import Str from "underscore.string"
 // Transform from `addr__name_id` to `addr.nameId`
 // TODO: Memoize to improve performance
 export function serialize(row) {
+  if (row == null) return null
   return _.transform(row, function(result, value, key) {
     let segments = key.split("__")
     let record = result
@@ -26,6 +27,8 @@ export function serialize(row) {
 // Transform from `addr.nameId` to `addr__name_id`
 // TODO: Memoize to improve performance
 export function deserialize(item) {
+  if (item == null) return null
+
   let row = {}
 
   function expand(obj, prefix) {

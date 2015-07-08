@@ -28,6 +28,7 @@ function execute_(statement, values) {
     if (!(typeof statement === "string" || statement instanceof String)) {
       // The statement is not a string assuming that this is a prepared
       // statement from sql-bricks
+      var originalStatement = statement
       var params = statement.toParams()
       statement = params.text
       values = params.values
@@ -58,7 +59,8 @@ function execute_(statement, values) {
 
       // TRACE: Calculate the elasped time and log the SQL statement
       let elapsed = +((microtime.now() - now) / 1000).toFixed(2)
-      log.trace({id: ctx.id, elapsed: `${elapsed}ms`}, statement)
+      log.trace({id: ctx.id, elapsed: `${elapsed}ms`},
+        (originalStatement ? ("" + originalStatement) : statement))
 
       // DEBUG: Increment the per-session counters
       ctx.elapsed += elapsed

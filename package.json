@@ -26,6 +26,7 @@
     "pg": "^4.3.0",
     "pg-native": "^1.8.0",
     "shortid": "^2.2.2",
+    "sql-bricks-postgres": "^0.4.1",
     "underscore.string": "^3.1.1"
   },
   "devDependencies": {
