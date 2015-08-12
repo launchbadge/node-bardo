@@ -25,73 +25,81 @@ export default class Model {
   /**
    * Get a single model instance; identified by the primaryKey (id).
    */
-  static async one(id) {
-    // Build the SQL statement (and attach a `WHERE` for the id)
-    let stmt = this.read().where({id})
+  static one(id) {
+    return new Promise((resolve, reject) => {
+      // Build the SQL statement (and attach a `WHERE` for the id)
+      let stmt = this.read().where({id})
 
-    // Execute the statement
-    let row = (await db.execute(stmt))[0]
-
-    // Return the result
-    return this.serialize(row)
+      // Execute the statement
+      db.execute(stmt).then((rows) => {
+        // Return the result
+        resolve(this.serialize(rows[0]))
+      }).catch(reject)
+    })
   }
 
   /**
    * Get all rows (as model instances).
    */
-  static async all() {
-    // Build the SQL statement
-    let stmt = this.read()
+  static all() {
+    return new Promise((resolve, reject) => {
+      // Build the SQL statement
+      let stmt = this.read()
 
-    // Execute the statement
-    let rows = (await db.execute(stmt))
-
-    // Return the result
-    return rows.map(this.serialize)
+      // Execute the statement
+      db.execute(stmt).then((rows) => {
+        // Return the result
+        resolve(rows.map(this.serialize))
+      }).catch(reject)
+    })
   }
 
   /**
    * Create a new model instance from the given values.
    */
-  static async create(item) {
+  static create(item) {
     if (this.table == null) {
       throw new Error(`${this.name}.table must be defined`)
     }
 
-    // Build the SQL statement
-    let values = this.deserialize(item)
-    let stmt = sql.insert(this.table).values(values).returning("*")
+    return new Promise((resolve, reject) => {
+      // Build the SQL statement
+      let values = this.deserialize(item)
+      let stmt = sql.insert(this.table).values(values).returning("*")
 
-    // Execute the statement
-    let row = (await db.execute(stmt))[0]
-
-    // Return the result
-    return this.serialize(row)
+      // Execute the statement
+      db.execute(stmt).then((rows) => {
+        // Return the result
+        resolve(this.serialize(rows[0]))
+      }).catch(reject)
+    })
   }
 
   /**
    * Update a model instance from the given values.
    */
-  static async update(id, item) {
+  static update(id, item) {
     if (this.table == null) {
       throw new Error(`${this.name}.table must be defined`)
     }
 
-    // Build the SQL statement (and attach a `WHERE` for the id)
-    let values = this.deserialize(item)
-    let stmt = sql.update(this.table, values).where({id}).returning("*")
+    return new Promise((resolve, reject) => {
+      // Build the SQL statement (and attach a `WHERE` for the id)
+      let values = this.deserialize(item)
+      let stmt = sql.update(this.table, values).where({id}).returning("*")
 
-    // Execute the statement
-    let row = (await db.execute(stmt))[0]
-
-    // Return the result
-    return this.serialize(row)
+      // Execute the statement
+      db.execute(stmt).then((rows) => {
+        // Return the result
+        resolve(this.serialize(rows[0]))
+      }).catch(reject)
+    })
   }
 
   /**
    * Delete a single row; identified by the primaryKey (id).
    */
-  static async destroy(id) {
+  static destroy(id) {
     if (this.table == null) {
       throw new Error(`${this.name}.table must be defined`)
     }
@@ -99,8 +107,11 @@ export default class Model {
     // Build the SQL statement (and attach a `WHERE` for the id)
     let stmt = sql.deleteFrom(this.table).where({id})
 
-    // Execute the statement
-    let result = await db.execute(stmt)
-    return result > 0
+    return new Promise(function(resolve, reject) {
+      // Execute the statement
+      db.execute(stmt).then(function(result) {
+        resolve(result > 0)
+      }).catch(reject)
+    })
   }
 }
