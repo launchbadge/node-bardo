@@ -1,7 +1,6 @@
 import _ from "lodash"
 import log from "../log"
 import microtime from "microtime"
-import Promise from "bluebird"
 import begin from "./begin"
 
 // Assert that we have a database context

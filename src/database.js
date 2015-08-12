@@ -1,6 +1,5 @@
 var pg = require("pg").native
 var config = require("./config")
-var Promise = require("bluebird")
 
 export function create(name) {
   // Use the config name if no name is passed

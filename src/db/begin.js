@@ -1,7 +1,6 @@
 import pool from "../pool"
 import domain from "domain"
 import shortid from "shortid"
-import Promise from "bluebird"
 
 export default function begin() {
   return new Promise(function(resolve, reject) {
