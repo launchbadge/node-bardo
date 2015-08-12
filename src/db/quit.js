@@ -1,4 +1,4 @@
-import pool from "../pool"
+import {native as pg} from "pg"
 
 // Schedule immediate termination (as soon as all active sessions
 // call `.exit`). This is not the normal behavior as the pool normally
@@ -6,9 +6,7 @@ import pool from "../pool"
 // quite useful in scratch scripting though.
 export default function quit() {
   return new Promise(function(resolve) {
-    pool.drain(function() {
-      pool.destroyAllNow()
-      resolve()
-    })
+    pg.on("end", resolve)
+    pg.end()
   })
 }

@@ -12,7 +12,7 @@ function assertContext() {
         d.context == null ||
         d.context.bardo == null) {
       // Begin the session before proceeding
-      return begin().then(resolve, reject)
+      return begin().then(resolve).catch(reject)
     }
 
     // Continue onwards with our active domain
@@ -109,7 +109,7 @@ export default function execute(statement, values) {
       return assertTransaction(statement).then(function() {
         // Execute the statement
         return execute_(statement, values).then(resolve, reject)
-      })
-    })
+      }).catch(reject)
+    }).catch(reject)
   })
 }

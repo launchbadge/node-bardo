@@ -1,4 +1,3 @@
-import pool from "../pool"
 import log from "../log"
 import execute from "./execute"
 
@@ -10,13 +9,13 @@ export default function end() {
       d.context == null ||
       d.context.bardo == null) {
     // TODO: Report an error that we weren't in an active session
-    return
+    return null
   }
 
   return new Promise(function(resolve, reject) {
     function next() {
       // Release our client from the pool
-      pool.release(d.context.bardo.client)
+      d.context.bardo.done()
 
       // DEBUG: Report total SQL execution time for this session
       let {id, elapsed, count} = d.context.bardo
@@ -36,7 +35,7 @@ export default function end() {
 
     // If we are currently in a transaction; rollback the transaction
     if (d.context.bardo.inTransaction) {
-      execute("ROLLBACK").then(next)
+      execute("ROLLBACK").then(next).catch(reject)
     } else {
       next()
     }

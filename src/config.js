@@ -1,5 +1,7 @@
-process.env.SUPPRESS_NO_CONFIG_WARNING = 'y';
-var config = require('config');
+process.env.SUPPRESS_NO_CONFIG_WARNING = "y"
+var config = require("config")
+
+var pg = require("pg").native
 
 // Declare default configuration
 let defaults = {
@@ -21,22 +23,35 @@ let defaults = {
 
   // Host address of the database server [defaults to `127.0.0.1`]
   host: "127.0.0.1",
+
+  // Pool configuration
+  pool: {
+    // Number of unique Client objects to maintain in the pool.
+    size: 25,
+
+    // Max milliseconds a client can go unused before it is removed from
+    // the pool and destroyed.
+    timeout: 30000,
+  }
 }
 
 // Setup default configuration
-config.util.setModuleDefaults('db', defaults);
+config.util.setModuleDefaults("db", defaults)
 
-export function configure(options = {}) {
-  // Mixin configs that have been passed in, and make those my defaults
-  config.util.extendDeep(defaults, options);
-  config.util.setModuleDefaults('db', defaults);
+export function has(key) {
+  return config.has(`db.${key}`)
 }
 
-export function has(key) { return config.has(`db.${key}`) }
-export function get(key) { return config.get(`db.${key}`) }
+export function get(key) {
+  return config.get(`db.${key}`)
+}
+
+// Configure postgres
+pg.defaults.parseInt8 = true
+pg.defaults.poolSize = get("pool.size")
+pg.defaults.poolIdleTimeout = get("pool.timeout")
 
 export default {
-  configure,
   get,
   has
 }
