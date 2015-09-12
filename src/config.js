@@ -1,7 +1,10 @@
-process.env.SUPPRESS_NO_CONFIG_WARNING = "y"
-var config = require("config")
+import _ from "lodash"
+import {native as pg} from "pg"
 
-var pg = require("pg").native
+// NOTE: This must be `require` (and not `import`) as it must happen
+//       after the `process.env` configuration
+process.env.SUPPRESS_NO_CONFIG_WARNING = "y"
+let configModule = require("config")
 
 // Declare default configuration
 let defaults = {
@@ -36,22 +39,47 @@ let defaults = {
 }
 
 // Setup default configuration
-config.util.setModuleDefaults("db", defaults)
+configModule.util.setModuleDefaults("db", defaults)
 
-export function has(key) {
-  return config.has(`db.${key}`)
-}
+// Pull configuration store from "node-config"
+let config = _.cloneDeep(configModule.get("db"))
 
 export function get(key) {
-  return config.get(`db.${key}`)
+  let names = key.split(".")
+  let result = config
+  for (let name of names) {
+    result = result[name]
+
+    // Short-circuit in case of `x.y` where `x` is null
+    if (result == null) {
+      return result
+    }
+  }
+
+  return result
 }
 
-// Configure postgres
-pg.defaults.parseInt8 = true
-pg.defaults.poolSize = get("pool.size")
-pg.defaults.poolIdleTimeout = get("pool.timeout")
+export function has(key) {
+  return get(key) != null
+}
+
+// Configure merges in new options with the config store
+export function configure(options) {
+  if (options != null) {
+    _.merge(config, options)
+  }
+
+  // Configure postgres
+  pg.defaults.parseInt8 = true
+  pg.defaults.poolSize = get("pool.size")
+  pg.defaults.poolIdleTimeout = get("pool.timeout")
+}
+
+// Bootstrap
+configure()
 
 export default {
+  configure,
   get,
   has
 }

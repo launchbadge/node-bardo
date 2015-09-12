@@ -1,6 +1,7 @@
 var pg = require("pg").native
 var config = require("./config")
 
+// TODO: Move to util.createDatabase
 export function create(name) {
   // Use the config name if no name is passed
   if (!name) {
@@ -35,6 +36,7 @@ export function create(name) {
   })
 }
 
+// TODO: Move to util.dropDatabase
 export function drop(name) {
   // Use the config name if no name is passed
   if (!name) {
