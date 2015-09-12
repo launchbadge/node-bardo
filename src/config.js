@@ -30,7 +30,7 @@ let defaults = {
   // Pool configuration
   pool: {
     // Number of unique Client objects to maintain in the pool.
-    size: 25,
+    size: 10,
 
     // Max milliseconds a client can go unused before it is removed from
     // the pool and destroyed.
