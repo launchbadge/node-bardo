@@ -27,6 +27,9 @@ let defaults = {
   // Host address of the database server [defaults to `127.0.0.1`]
   host: "127.0.0.1",
 
+  // Automatically commit after each `execute`
+  autoCommit: false,
+
   // Pool configuration
   pool: {
     // Number of unique Client objects to maintain in the pool.
