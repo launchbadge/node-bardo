@@ -90,15 +90,20 @@ function execute_(statement, values) {
   })
 }
 
-function autoCommit(statement) {
+function autoCommit(statement, result) {
   let ctx = process.domain.context.bardo
-  if (config.get("autoCommit") && ctx.inTransaction) {
-    if (!(/^(begin)/i.test(statement))) {
-      return execute("COMMIT")
+  return new Promise((resolve, reject) => {
+    if (config.get("autoCommit") && ctx.inTransaction) {
+      if (!(/^(begin)/i.test(statement))) {
+        return execute("COMMIT").then(function() {
+          resolve(result)
+        }).catch(reject)
+      }
     }
-  }
 
-  return new Promise(resolve => { resolve() })
+    return resolve(result)
+  })
+
 }
 
 // TODO: Proper parsing of OID types into javscript equivalents
@@ -120,8 +125,8 @@ export default function execute(statement, values) {
       // Assert the transaction context
       return assertTransaction(statement).then(function() {
         // Execute the statement
-        return execute_(statement, values).then(function() {
-          return autoCommit(statement).then(resolve).catch(reject)
+        return execute_(statement, values).then(function(result) {
+          return autoCommit(statement, result).then(resolve).catch(reject)
         }, reject)
       }).catch(reject)
     }).catch(reject)
