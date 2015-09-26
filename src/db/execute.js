@@ -90,7 +90,7 @@ function execute_(statement, values) {
   })
 }
 
-function autoCommit() {
+function autoCommit(statement) {
   let ctx = process.domain.context.bardo
   if (config.get("autoCommit") && ctx.inTransaction) {
     if (!(/^(begin)/i.test(statement))) {
