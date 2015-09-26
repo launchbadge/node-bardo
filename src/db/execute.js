@@ -93,7 +93,9 @@ function execute_(statement, values) {
 function autoCommit() {
   let ctx = process.domain.context.bardo
   if (config.get("autoCommit") && ctx.inTransaction) {
-    return execute("COMMIT")
+    if (!(/^(begin)/i.test(statement))) {
+      return execute("COMMIT")
+    }
   }
 
   return new Promise(resolve => { resolve() })
@@ -119,7 +121,7 @@ export default function execute(statement, values) {
       return assertTransaction(statement).then(function() {
         // Execute the statement
         return execute_(statement, values).then(function() {
-          return autoCommit().then(resolve).catch(reject)
+          return autoCommit(statement).then(resolve).catch(reject)
         }, reject)
       }).catch(reject)
     }).catch(reject)
