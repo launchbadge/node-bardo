@@ -36,7 +36,7 @@ export default function begin() {
         }
 
         // Execute a "BEGIN" statement to begin the transaction
-        return require("./execute")("BEGIN").then(resolve).catch(reject)
+        return require("./execute").default("BEGIN").then(resolve).catch(reject)
       })
     }
   })

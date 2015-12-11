@@ -1,5 +1,4 @@
 import _ from "lodash"
-import Str from "underscore.string"
 
 // Transform from `addr__name_id` to `addr.nameId`
 // TODO: Memoize to improve performance
@@ -10,7 +9,7 @@ export function serialize(row) {
     let record = result
 
     for (let seg of segments.slice(0, segments.length - 1)) {
-      let name = Str.camelize(seg)
+      let name = _.camelCase(seg)
 
       if (record[name] == null) {
         record[name] = {}
@@ -19,7 +18,7 @@ export function serialize(row) {
       record = record[name]
     }
 
-    let name = Str.camelize(segments[segments.length - 1])
+    let name = _.camelCase(segments[segments.length - 1])
     record[name] = row[key]
   })
 }
@@ -42,7 +41,7 @@ export function deserialize(item) {
 
   function expand(obj, prefix) {
     _.each(obj, function(value, key) {
-      let text = Str.underscored(key)
+      let text = _.snakeCase(key)
       let name = prefix ? prefix + "__" + text : text
       if (_.isPlainObject(value)) {
         expand(value, name)

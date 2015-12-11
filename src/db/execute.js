@@ -13,16 +13,17 @@ function assertContext() {
         d.context == null ||
         d.context.bardo == null) {
       // Begin the session before proceeding
-      return begin().then(resolve).catch(reject)
+      return begin().then(() => {
+        resolve(d.context.bardo)
+      }).catch(reject)
     }
 
     // Continue onwards with our active domain
-    return resolve()
+    return resolve(d.context.bardo)
   })
 }
 
-function assertTransaction(statement) {
-  let ctx = process.domain.context.bardo
+function assertTransaction(ctx, statement) {
   return new Promise(function(resolve, reject) {
     if (/^begin/i.test(statement)) {
       // This statement is going to begin a transaction directly
@@ -40,8 +41,7 @@ function assertTransaction(statement) {
 }
 
 // Actually execute the statement
-function execute_(statement, values) {
-  let ctx = process.domain.context.bardo
+function execute_(ctx, statement, values) {
   return new Promise(function(resolve, reject) {
     if (/^begin/i.test(statement)) {
       // If this is a `BEGIN` statement; put us in a transaction
@@ -90,8 +90,7 @@ function execute_(statement, values) {
   })
 }
 
-function autoCommit(statement, result) {
-  let ctx = process.domain.context.bardo
+function autoCommit(ctx, statement, result) {
   return new Promise((resolve, reject) => {
     if (config.get("autoCommit") && ctx.inTransaction) {
       if (!(/^(begin)/i.test(statement))) {
@@ -110,7 +109,7 @@ function autoCommit(statement, result) {
 export default function execute(statement, values) {
   return new Promise(function(resolve, reject) {
     // Assert the database context
-    return assertContext().then(function() {
+    return assertContext().then(function(ctx) {
       if (!(typeof statement === "string" || statement instanceof String)) {
         // The statement is not a string assuming that this is a prepared
         // statement from sql-bricks
@@ -123,10 +122,10 @@ export default function execute(statement, values) {
       statement = statement.trim()
 
       // Assert the transaction context
-      return assertTransaction(statement).then(function() {
+      return assertTransaction(ctx, statement).then(function() {
         // Execute the statement
-        return execute_(statement, values).then(function(result) {
-          return autoCommit(statement, result).then(resolve).catch(reject)
+        return execute_(ctx, statement, values).then(function(result) {
+          return autoCommit(ctx, statement, result).then(resolve).catch(reject)
         }, reject)
       }).catch(reject)
     }).catch(reject)

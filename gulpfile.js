@@ -1,6 +1,6 @@
-require('babel/register')
+require("babel-core/register")
 
-var gulp = require('gulp')
+var gulp = require("gulp")
 var _ = require("lodash")
 var $ = require("gulp-load-plugins")()
 var runSequence = require("run-sequence")
@@ -38,7 +38,7 @@ function release(importance) {
 
     // Bump version on the package.json
     .pipe($.bump({type: importance}))
-    .pipe(gulp.dest('./'))
+    .pipe(gulp.dest("./"))
 
     // Commit the changes
     .pipe($.git.commit("Bump version"))
@@ -48,7 +48,7 @@ function release(importance) {
 
     .on("end", function() {
       $.git.push("origin", "master", {args: "--follow-tags"}, function() {
-        gulp.src('')
+        gulp.src("")
           .pipe($.shell([
             "npm publish"
           ]))
@@ -60,6 +60,6 @@ function release(importance) {
   })
 }
 
-gulp.task("release:minor", _.partial(release, "minor"));
-gulp.task("release:major", _.partial(release, "major"));
-gulp.task("release:patch", _.partial(release, "patch"));
+gulp.task("release:minor", _.partial(release, "minor"))
+gulp.task("release:major", _.partial(release, "major"))
+gulp.task("release:patch", _.partial(release, "patch"))

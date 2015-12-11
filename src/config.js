@@ -8,6 +8,9 @@ let configModule = require("config")
 
 // Declare default configuration
 let defaults = {
+  // Name for logging
+  name: configModule.has("name") ? configModule.get("name") : "Bardo",
+
   // Logging configuration; the defined level to show
   log: "trace",
 
