@@ -27,7 +27,7 @@ export default function begin() {
 
         // Initialize the domain context
         if (d.context == null) d.context = {}
-        d.context.bardo = {
+        var ctx = {
           id: shortid(),
           client,
           done,
@@ -35,8 +35,12 @@ export default function begin() {
           elapsed: 0
         }
 
+        d.context.bardo = ctx
+
         // Execute a "BEGIN" statement to begin the transaction
-        return require("./execute").default("BEGIN").then(resolve).catch(reject)
+        return require("./execute").default("BEGIN").then(() => {
+          resolve(ctx)
+        }).catch(reject)
       })
     }
   })

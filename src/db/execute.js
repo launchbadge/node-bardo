@@ -13,8 +13,8 @@ function assertContext() {
         d.context == null ||
         d.context.bardo == null) {
       // Begin the session before proceeding
-      return begin().then(() => {
-        resolve(d.context.bardo)
+      return begin().then((ctx) => {
+        resolve(ctx)
       }).catch(reject)
     }
 
