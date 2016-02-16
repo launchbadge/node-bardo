@@ -40,7 +40,7 @@ export default function truncate(tables) {
         for (var i = 0; i < result.length; i += 1) {
           var row = result[i]
 
-          if (row.table_type === "view") {
+          if (row.table_type.toLowerCase() === "view") {
             continue
           }
 
